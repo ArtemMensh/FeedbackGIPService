@@ -23,7 +23,7 @@ app = Flask(__name__)
 # Функция для создания задачи в youGile
 def create_youGile_task(task_title, task_description):
     headers = {
-        "Authorization": f"Bearer {YOUGILE_API_TOKEN}",
+        "Authorization": "Bearer {}".format(YOUGILE_API_TOKEN),
         "Content-Type": "application/json"
     }
     data = {
