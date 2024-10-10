@@ -36,7 +36,7 @@ def create_youGile_task(task_title, task_description):
     if response.status_code == 201:
         print("Задача успешно создана в youGile.")
     else:
-        print(f"Ошибка при создании задачи: {response.status_code} - {response.text}")
+        print("Ошибка при создании задачи: " + response.status_code + " - " + response.text)
 
 
 # Функция для подключения к серверу и поиска папки
@@ -55,7 +55,7 @@ def get_files_from_server(remote_path):
     os.makedirs(local_path, exist_ok=True)
 
     for filename in sftp.listdir(full_path):
-        remote_file_path = f"{full_path}/{filename}"
+        remote_file_path = full_path + "/" + filename
         local_file_path = local_path / filename  # Проверяем, существует ли файл локально
         sftp.get(remote_file_path, str(local_file_path))
 
@@ -84,7 +84,7 @@ def upload_files(local_path):
 def json_to_html_string(data):
     html_string = ""
     for key, value in data.items():
-        html_string += f"{key}: {value} <br>"
+        html_string += key + ":" + value + " <br>"
     return html_string
 
 
