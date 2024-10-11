@@ -4,6 +4,8 @@ import requests
 from pathlib import Path
 from flask import Flask, request, jsonify
 import shutil
+import pymysql
+import base64
 
 # Конфигурация
 YOUGILE_API_URL = "https://ru.yougile.com/api-v2/tasks"
@@ -86,19 +88,56 @@ def json_to_html_string(data):
 
 
 # Основная функция для выполнения всех шагов
+def load_torrent_and_script_files(local_path, game_id):
+    connection = pymysql.connect(
+        host='195.201.111.53',
+        user='dataworker',
+        password='VyFITpKnLQDIj77hOxk4',
+        database='uGames',
+        port=3306  # Убедитесь, что используется правильный порт
+    )
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT torrent_file, torrent_file_name, date_add_torrent_file, scriptAuto FROM versoin WHERE item_id = "
+        + game_id)
+    rows = cursor.fetchall()
+    for row in rows:
+        torrent_file_encoded = row[0]
+        torrent_file_name = row[1]
+        date_add_torrent_file = row[2]
+        script_auto = row[3]
+        # Раскодирование торрент-файла из Base64
+        decoded_file = base64.b64decode(torrent_file_encoded)
+        # Путь для сохранения торрент-файла
+        torrent_file_path = f"{local_path}/{torrent_file_name}"
+        script_path = f"{local_path}/script.js"
+        # Запись торрент-файла на диск
+        with open(torrent_file_path, 'wb') as torrent_file:
+            torrent_file.write(decoded_file)
+
+        if script_auto is not None and script_auto != '' and len(script_auto) > 0:
+            with open(script_path, 'w') as script_file:
+                script_file.write(script_auto)
+
+    cursor.close()
+    connection.close()
+
+
 def process_folder_and_send(remote_path, data):
     local_path = get_files_from_server(remote_path)
+    load_torrent_and_script_files(local_path, data['gameId'])
+
     file_urls = upload_files(local_path)
     text = json_to_html_string(data)
     full_message = text + "<br>".join(file_urls)
-    create_youGile_task(data.get('Тема'), full_message)
+    create_youGile_task(data.get('topic'), full_message)
 
 
 # Маршрут для приема POST-запросов
 @app.route('/feedbackGIP/', methods=['POST'])
 def upload():
     data = request.json
-    folder_name = data.get('ID')
+    folder_name = data.get('feedbackId')
 
     if not folder_name:
         return jsonify({"error": "Invalid input"}), 400
