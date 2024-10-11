@@ -2,7 +2,6 @@ import os
 import paramiko
 import requests
 from pathlib import Path
-import asyncio
 from flask import Flask, request, jsonify
 
 # Конфигурация
@@ -41,11 +40,6 @@ def create_youGile_task(task_title, task_description):
 
 # Функция для подключения к серверу и поиска папки
 def get_files_from_server(remote_path):
-    local_file_path_server = Path(SFTP_PATH_FOLDER_FEEDBACK + remote_path)
-
-    if local_file_path_server.exists():
-        return local_file_path_server
-
     full_path = SFTP_PATH_FOLDER_FEEDBACK + remote_path
     transport = paramiko.Transport((SFTP_HOST, SFTP_PORT))
     transport.connect(username=SFTP_USERNAME, password=SFTP_PASSWORD)

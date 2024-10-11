@@ -1,10 +1,10 @@
 #!/bin/bash
 
 APP_NAME="flask_service"           # Название вашего приложения (можно изменить)
-APP_DIR="/home/arttrit/FeedbackGIPService"        # Путь к вашему Flask приложению
+APP_DIR="/home/projects/FeedbackGIPService"        # Путь к вашему Flask приложению
 APP_SCRIPT="main.py"                # Имя файла вашего Flask приложения
-LOG_FILE="/home/arttrit/FeedbackGIPService/flask_service.log"  # Путь к файлу лога
-PID_FILE="/tmp/arttrit/flask_service.pid"      # PID файл для процесса
+LOG_FILE="/home/projects/FeedbackGIPService/flask_service.log"  # Путь к файлу лога
+PID_FILE="/home/projects/FeedbackGIPService/flask_service.pid"      # PID файл для процесса
 
 # Функция для запуска сервиса
 start_service() {
