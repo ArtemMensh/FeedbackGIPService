@@ -70,7 +70,7 @@ def upload_files(local_path):
                 url = response.json().get('link')
                 urls.append(
                     filename + ": " + '<a target="_blank" rel="noopener noreferrer" href="' + url + '">' + url + '</a>')
-                # os.remove(local_path)
+                os.remove(local_path)
     return urls
 
 
