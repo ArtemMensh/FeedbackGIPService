@@ -3,6 +3,7 @@ import paramiko
 import requests
 from pathlib import Path
 from flask import Flask, request, jsonify
+import shutil
 
 # Конфигурация
 YOUGILE_API_URL = "https://ru.yougile.com/api-v2/tasks"
@@ -70,7 +71,9 @@ def upload_files(local_path):
                 url = response.json().get('link')
                 urls.append(
                     filename + ": " + '<a target="_blank" rel="noopener noreferrer" href="' + url + '">' + url + '</a>')
-                os.remove(local_path)
+
+    shutil.rmtree(local_path)
+
     return urls
 
 
