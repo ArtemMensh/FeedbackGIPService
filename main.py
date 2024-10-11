@@ -83,7 +83,7 @@ def upload_files(local_path):
 def json_to_html_string(data):
     html_string = ""
     for key, value in data.items():
-        html_string += key + ":" + value + " <br>"
+        html_string += str(key) + ":" + str(value) + " <br>"
     return html_string
 
 
