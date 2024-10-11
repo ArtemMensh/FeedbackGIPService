@@ -125,7 +125,7 @@ def load_torrent_and_script_files(local_path, game_id):
 
 def process_folder_and_send(remote_path, data):
     local_path = get_files_from_server(remote_path)
-    load_torrent_and_script_files(local_path, data['gameId'])
+    load_torrent_and_script_files(local_path, str(data['gameId']))
 
     file_urls = upload_files(local_path)
     text = json_to_html_string(data)
@@ -137,7 +137,7 @@ def process_folder_and_send(remote_path, data):
 @app.route('/feedbackGIP/', methods=['POST'])
 def upload():
     data = request.json
-    folder_name = data.get('feedbackId')
+    folder_name = str(data.get('feedbackId'))
 
     if not folder_name:
         return jsonify({"error": "Invalid input"}), 400
