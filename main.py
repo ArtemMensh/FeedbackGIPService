@@ -131,7 +131,7 @@ def process_folder_and_send(remote_path, data):
     file_urls = upload_files(local_path)
     text = json_to_html_string(data)
     full_message = text + "<br>".join(file_urls)
-    create_youGile_task(data.get('topic'), full_message)
+    create_youGile_task(data.get('topic') + " - " + data.get('gameName'), full_message)
 
 
 # Маршрут для приема POST-запросов
