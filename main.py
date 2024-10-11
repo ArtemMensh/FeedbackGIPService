@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 import shutil
 import pymysql
 import base64
+import traceback
 
 # Конфигурация
 YOUGILE_API_URL = "https://ru.yougile.com/api-v2/tasks"
@@ -136,16 +137,20 @@ def process_folder_and_send(remote_path, data):
 # Маршрут для приема POST-запросов
 @app.route('/feedbackGIP/', methods=['POST'])
 def upload():
-    data = request.json
-    folder_name = str(data.get('feedbackId'))
+    try:
+        data = request.json
+        folder_name = str(data.get('feedbackId'))
 
-    if not folder_name:
-        return jsonify({"error": "Invalid input"}), 400
+        if not folder_name:
+            return jsonify({"error": "Invalid input"}), 400
 
-    # Запускаем асинхронную обработку
-    process_folder_and_send(folder_name, data)
+        # Запускаем асинхронную обработку
+        process_folder_and_send(folder_name, data)
 
-    return jsonify({"status": "Success"}), 200
+        return jsonify({"status": "Success"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e) + " " + traceback.format_exc()}), 500
 
 
 # Пример использования
