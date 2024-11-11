@@ -126,7 +126,8 @@ def load_torrent_and_script_files(local_path, game_id):
 
 def process_folder_and_send(remote_path, data):
     local_path = get_files_from_server(remote_path)
-    load_torrent_and_script_files(local_path, str(data['gameId']))
+    if str(data['gameId']) != '-1' and str(data['gameId']) != '0':
+        load_torrent_and_script_files(local_path, str(data['gameId']))
 
     file_urls = upload_files(local_path)
     text = json_to_html_string(data)
