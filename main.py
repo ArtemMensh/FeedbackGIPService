@@ -135,6 +135,30 @@ def process_folder_and_send(remote_path, data):
     create_youGile_task(data.get('topic') + " - " + data.get('gameName'), full_message)
 
 
+def is_ignored_ticket(data):
+    """
+    Проверка на исключения запросов по тексту запроса и по параметру userFile
+    :param data: тело запроса
+    :return: Если запрос прошел проверку, то возвращается True, иначе False
+    """
+    if 'userFile' in data and data['userFile'] != "Да":
+        return True
+
+    ignored_text = ['Недостаточно места на диске',
+                    'Система обнаружила недопустимый указатель адреса при попытке использовать в вызове аргумент '
+                    'указателя',
+                    'Отказано в доступе',
+                    'Процесс не может получить доступ к файлу, так как этот файл занят другим процессом',
+                    'Не удается найти указанный файл',
+                    'Системе не удается найти указанный путь']
+
+    for text in ignored_text:
+        if text in data.get('text'):
+            return True
+
+    return False
+
+
 # Маршрут для приема POST-запросов
 @app.route('/feedbackGIP/', methods=['POST'])
 def upload():
@@ -144,6 +168,9 @@ def upload():
 
         if not folder_name:
             return jsonify({"error": "Invalid input"}), 400
+
+        if is_ignored_ticket(data):
+            return jsonify({"status": "Ignored"}), 200
 
         # Запускаем асинхронную обработку
         process_folder_and_send(folder_name, data)
