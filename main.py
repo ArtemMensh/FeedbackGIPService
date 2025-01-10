@@ -141,7 +141,7 @@ def is_ignored_ticket(data):
     :param data: тело запроса
     :return: Если запрос прошел проверку, то возвращается True, иначе False
     """
-    if 'userFile' in data and data['userFile'] != "Да":
+    if 'userFile' in data and data['userFile'] == "Да":
         return True
 
     ignored_text = ['Недостаточно места на диске',
