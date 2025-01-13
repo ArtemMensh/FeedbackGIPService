@@ -12,6 +12,13 @@ from DropboxManager import DropboxManager
 from config import Config
 from yougile import create_you_gile_task
 
+
+logging.basicConfig(
+    filename='app.log',  # Имя файла для логов
+    filemode='a',        # Режим записи: 'a' для добавления, 'w' для перезаписи
+    format='%(asctime)s - %(levelname)s - %(message)s',  # Формат сообщения
+    level=logging.ERROR   # Уровень логирования
+)
 config = Config()
 dropbox_manager = DropboxManager(config)
 app = Flask(__name__)
