@@ -73,7 +73,7 @@ class DropboxManager:
         for filename in os.listdir(local_path):
             file_path = local_path / filename
             with open(file_path, 'rb') as f:
-                dbx.files_upload(f.read(), '/' + name_folder + "/" + filename,
+                dbx.files_upload(f.read(), self.folder + name_folder + "/" + filename,
                                  mode=dropbox.files.WriteMode('overwrite'))
 
             try:
