@@ -21,6 +21,7 @@ class DropboxManager:
         self.app_key = config.get("dropbox", "DROPBOX_APP_KEY")
         self.app_secret = config.get("dropbox", "DROPBOX_APP_SECRET")
         self.refresh_token = os.getenv("DROPBOX_REFRESH_TOKEN")
+        self.folder = config.get("dropbox", "DROPBOX_FOLDER_NAME")
         if not self.refresh_token:
             print("DROPBOX_REFRESH_TOKEN is not set in .env file")
             exit(1)
@@ -48,6 +49,7 @@ class DropboxManager:
         response = requests.post(url, data=data)
         response.raise_for_status()
         new_token = response.json()["access_token"]
+        self.access_token = new_token
         set_key(".env", "DROPBOX_API_TOKEN", new_token)
         return new_token
 
@@ -61,12 +63,12 @@ class DropboxManager:
         urls = []
         name_folder = local_path.name
         try:
-            dbx.files_get_metadata('/' + name_folder)
+            dbx.files_get_metadata(self.folder + name_folder)
         except AuthError as e:
             self.refresh_access_token()
             return self.upload_file(local_path)
         except Exception as e:
-            dbx.files_create_folder_v2("/" + name_folder)
+            dbx.files_create_folder_v2(self.folder + name_folder)
 
         for filename in os.listdir(local_path):
             file_path = local_path / filename
@@ -75,12 +77,12 @@ class DropboxManager:
                                  mode=dropbox.files.WriteMode('overwrite'))
 
             try:
-                link = dbx.sharing_create_shared_link_with_settings('/' + name_folder + "/" + filename).url
+                link = dbx.sharing_create_shared_link_with_settings(self.folder + name_folder + "/" + filename).url
                 urls.append(
                     filename + ": " + '<a target="_blank" rel="noopener noreferrer" href="' + link + '">' + link + '</a>'
                 )
             except Exception as e:
-                links = dbx.sharing_list_shared_links('/' + name_folder + "/" + filename).links
+                links = dbx.sharing_list_shared_links(self.folder + name_folder + "/" + filename).links
                 for link in links:
                     urls.append(
                         filename + ": " + '<a target="_blank" rel="noopener noreferrer" href="' + link.url + '">' + link.url + '</a>'

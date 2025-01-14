@@ -142,8 +142,18 @@ def process_folder_and_send(folder_name, data):
     if str(data['gameId']) != '-1' and str(data['gameId']) != '0':
         load_torrent_and_script_files(local_path, str(data['gameId']))
 
-    file_urls_io = upload_files(local_path, False)
-    file_urls_dropbox = dropbox_manager.upload_file(local_path)
+    try:
+        file_urls_io = upload_files(local_path, False)
+    except Exception as e:
+        logging.error("Не удалось загрузить файлы на file.io: " + str(e))
+        file_urls_io = ["Не удалось загрузить файлы на file.io:"]
+
+    try:
+        file_urls_dropbox = dropbox_manager.upload_file(local_path)
+    except Exception as e:
+        logging.error("Не удалось загрузить файлы на DropBox: " + str(e))
+        file_urls_dropbox = ["Не удалось загрузить файлы на DropBox:"]
+
     text = json_to_html_string(data)
     full_message = text + "<br> <h1>Ссылки на файлы на DropBox:</h1>" + " <br> ".join(
         file_urls_dropbox) + "<br> <h1>Ссылки на файлы на file.io:</h1>" + " <br> ".join(file_urls_io)
