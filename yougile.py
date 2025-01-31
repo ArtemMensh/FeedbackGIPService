@@ -35,7 +35,9 @@ def create_you_gile_task(task_title, task_description):
 
     if response.status_code == 201:
         print("Задача успешно создана в youGile.")
+        logging.getLogger().setLevel(logging.INFO)
         logging.info("Задача успешно создана в youGile.")
+        logging.getLogger().setLevel(logging.ERROR)
     else:
         logging.error("Ошибка при создании задачи: " + response.status_code + " - " + response.text)
         print("Ошибка при создании задачи: " + response.status_code + " - " + response.text)
