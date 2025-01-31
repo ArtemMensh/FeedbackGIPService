@@ -1,8 +1,15 @@
+import logging
+
 import requests
 from config import Config
 
 config = Config()
-
+logging.basicConfig(
+    filename='app.log',  # Имя файла для логов
+    filemode='a',        # Режим записи: 'a' для добавления, 'w' для перезаписи
+    format='%(asctime)s - %(levelname)s - %(message)s',  # Формат сообщения
+    level=logging.ERROR   # Уровень логирования
+)
 def create_you_gile_task(task_title, task_description):
     yougile_api_token = config.get('yougile', 'YOUGILE_API_TOKEN')
     yougile_api_url = config.get('yougile', 'YOUGILE_API_URL')
@@ -27,5 +34,7 @@ def create_you_gile_task(task_title, task_description):
 
     if response.status_code == 201:
         print("Задача успешно создана в youGile.")
+        logging.info("Задача успешно создана в youGile.")
     else:
+        logging.error("Ошибка при создании задачи: " + response.status_code + " - " + response.text)
         print("Ошибка при создании задачи: " + response.status_code + " - " + response.text)
