@@ -1,3 +1,5 @@
+from time import sleep
+
 import dropbox
 
 from config import Config
@@ -90,3 +92,22 @@ class DropboxManager:
 
         shutil.rmtree(local_path)
         return urls
+
+    def delete_files(self, name_folders):
+        entries = [dropbox.files.DeleteArg(path=self.folder + folder) for folder in name_folders]
+
+        self.check_and_refresh_token()
+        dbx = dropbox.Dropbox(self.access_token)
+
+        result = dbx.files_delete_batch(entries)
+
+        async_jobs = result.get_async_job_id()
+
+        result_delete = dbx.files_delete_batch_check(async_jobs)
+
+        while not result_delete.is_complete():
+            print("Удаление еще не завершено, ожидание 1 секунду")
+            result_delete = dbx.files_delete_batch_check(async_jobs)
+            sleep(1)
+
+        print("Удаление завершено")

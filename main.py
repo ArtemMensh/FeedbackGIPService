@@ -9,18 +9,19 @@ import logging
 from pathlib import Path
 from flask import Flask, request, jsonify
 from DropboxManager import DropboxManager
+from YandexDiskManager import YandexDiskManager
 from config import Config
 from yougile import create_you_gile_task
 
-
 logging.basicConfig(
     filename='app.log',  # Имя файла для логов
-    filemode='a',        # Режим записи: 'a' для добавления, 'w' для перезаписи
+    filemode='a',  # Режим записи: 'a' для добавления, 'w' для перезаписи
     format='%(asctime)s - %(levelname)s - %(message)s',  # Формат сообщения
-    level=logging.ERROR   # Уровень логирования
+    level=logging.ERROR  # Уровень логирования
 )
 config = Config()
 dropbox_manager = DropboxManager(config)
+yandex_disk_manager = YandexDiskManager(config)
 app = Flask(__name__)
 
 
@@ -142,21 +143,26 @@ def process_folder_and_send(folder_name, data):
     if str(data['gameId']) != '-1' and str(data['gameId']) != '0':
         load_torrent_and_script_files(local_path, str(data['gameId']))
 
-    try:
-        file_urls_io = upload_files(local_path, False)
-    except Exception as e:
-        logging.error("Не удалось загрузить файлы на file.io: " + str(e))
-        file_urls_io = ["Не удалось загрузить файлы на file.io:"]
+    # try:
+    #     file_urls_io = upload_files(local_path, False)
+    # except Exception as e:
+    #     logging.error("Не удалось загрузить файлы на file.io: " + str(e))
+    #     file_urls_io = ["Не удалось загрузить файлы на file.io:"]
+    #
+    # try:
+    #     file_urls_dropbox = dropbox_manager.upload_file(local_path)
+    # except Exception as e:
+    #     logging.error("Не удалось загрузить файлы на DropBox: " + str(e))
+    #     file_urls_dropbox = ["Не удалось загрузить файлы на DropBox:"]
 
     try:
-        file_urls_dropbox = dropbox_manager.upload_file(local_path)
+        file_urls_yandex = yandex_disk_manager.upload_file(local_path)
     except Exception as e:
-        logging.error("Не удалось загрузить файлы на DropBox: " + str(e))
-        file_urls_dropbox = ["Не удалось загрузить файлы на DropBox:"]
+        logging.error("Не удалось загрузить файлы на YandexDisk: " + str(e))
+        file_urls_yandex = ["Не удалось загрузить файлы на YandexDisk:"]
 
     text = json_to_html_string(data)
-    full_message = text + "<br> <h1>Ссылки на файлы на DropBox:</h1>" + " <br> ".join(
-        file_urls_dropbox) + "<br> <h1>Ссылки на файлы на file.io:</h1>" + " <br> ".join(file_urls_io)
+    full_message = text + "<br> <h1>Ссылки на файлы на YandexDisk:</h1>" + " <br> ".join(file_urls_yandex)
     create_you_gile_task(data.get('topic') + " - " + data.get('gameName'), full_message)
 
 
