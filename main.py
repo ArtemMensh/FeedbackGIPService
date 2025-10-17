@@ -8,10 +8,17 @@ import requests
 import logging
 from pathlib import Path
 from flask import Flask, request, jsonify
-from DropboxManager import DropboxManager
 from YandexDiskManager import YandexDiskManager
 from config import Config
 from yougile import create_you_gile_task
+
+import sys
+print("PYTHON:", sys.executable)
+print("VERSION:", sys.version)
+try:
+    print("paramiko OK, flask OK")
+except Exception as e:
+    print("IMPORT ERROR:", e)
 
 logging.basicConfig(
     filename='app.log',  # Имя файла для логов
@@ -20,7 +27,6 @@ logging.basicConfig(
     level=logging.ERROR  # Уровень логирования
 )
 config = Config()
-dropbox_manager = DropboxManager(config)
 yandex_disk_manager = YandexDiskManager(config)
 app = Flask(__name__)
 

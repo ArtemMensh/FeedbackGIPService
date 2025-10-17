@@ -1,4 +1,3 @@
-import DropboxManager
 import yougile
 from config import Config
 import re
@@ -28,5 +27,3 @@ if __name__ == '__main__':
 
     feedback_ids = feedback_completed_ids + feedback_trash_ids
 
-    dropbox = DropboxManager.DropboxManager(Config())
-    dropbox.delete_files(feedback_ids)
