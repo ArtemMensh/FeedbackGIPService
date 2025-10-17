@@ -91,7 +91,6 @@ def get_tasks_from_column(column_id):
         else:
             logging.error(
                 "Ошибка при получении выполненных задач: " + response_raw.status_code + " - " + response_raw.text)
-            print("Ошибка при получении выполненных задач: " + response_raw.status_code + " - " + response_raw.text)
 
     return complite_tasks
 def get_completed_tasks():
